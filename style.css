@@ -21,6 +21,12 @@
   justify-content: center;
   flex-wrap: wrap;
 }
+#drop-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+}
 
 .music-player {
   background: var(--clr-background);
@@ -43,11 +49,12 @@ nav .circle {
   background: #fff;
   color: var(--clr-buttons);
   box-shadow: 0 5px 10px var(--clr-box-shadow);
+  cursor: pointer;
 }
 
 .song-img {
   aspect-ratio: 1 / 1;
-  width: 220px;
+  width: 100px;
   border-radius: 50%;
   border: 8px solid #fff;
   box-shadow: 0 10px 60px var(--clr-box-shadow);
@@ -64,7 +71,8 @@ nav .circle {
   color: #333;
 }
 
-#progress {
+#progress,
+#volume {
   appearance: none;
   width: 100%;
   height: 6px;
@@ -74,7 +82,8 @@ nav .circle {
   margin: 40px 0;
 }
 
-#progress::-webkit-slider-thumb {
+#progress::-webkit-slider-thumb,
+#volume::-webkit-slider-thumb {
   appearance: none;
   background: var(--clr-accent);
   width: 35px;
@@ -84,7 +93,8 @@ nav .circle {
   box-shadow: 0 5px 5px var(--clr-box-shadow);
 }
 
-#progress::-moz-range-thumb {
+#progress::-moz-range-thumb,
+#volume::-moz-range-thumb {
   appearance: none;
   background: var(--clr-accent);
   width: 10px;
@@ -118,6 +128,47 @@ nav .circle {
   transform: scale(1.5);
   background: var(--clr-buttons);
   color: white;
+}
+
+.playlist-container {
+  /* position: relative; */
+  height: 400px;
+  width: 200px;
+  top: 0;
+  background: var(--clr-background);
+  align-self: flex-start;
+  padding: 25px 35px;
+  margin: 0 10px;
+  display: none;
+}
+
+.track {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  cursor: pointer;
+  padding: 4px 5px;
+  margin: 10px 0;
+  border-bottom: 1px solid #333;
+  text-align: center;
+}
+.track-container {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  gap: 1.2rem;
+  font-size: 0.8rem;
+}
+
+.songName {
+  cursor: pointer;
+  border: none;
+  background: rgba(0, 0, 0, 0);
+}
+
+.active {
+  background-color: #fff;
 }
 
 @media only screen and (max-width: 600px) {

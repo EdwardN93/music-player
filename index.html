@@ -16,7 +16,9 @@
         <div class="music-player">
           <nav>
             <div class="circle"><i class="fa-solid fa-angle-left"></i></div>
-            <div class="circle"><i class="fa-solid fa-bars"></i></div>
+            <div class="circle" id="playlist">
+              <i class="fa-solid fa-bars"></i>
+            </div>
           </nav>
           <img src="media/thumbnail.jpg" alt="thumbnail" class="song-img" />
           <h1 id="title">Drag And Drop a song from media folder</h1>
@@ -27,6 +29,14 @@
             <!-- <source id="source" type="audio/mpeg" /> -->
           </audio>
           <input type="range" value="0" / id="progress">
+          <input
+            type="range"
+            value=".5"
+            min="0"
+            max="1"
+            step=".01"
+            id="volume"
+          />
 
           <div class="controls">
             <div><i class="fa-solid fa-backward"></i></div>
@@ -36,20 +46,35 @@
             <div><i class="fa-solid fa-forward"></i></div>
           </div>
         </div>
+        <div class="playlist-container"></div>
       </div>
     </div>
 
     <script>
       let progress = document.getElementById("progress");
+      let volume = document.getElementById("volume");
       let song = document.getElementById("song");
       let ctrlIcon = document.getElementById("ctrlIcon");
       let songSource = document.getElementById("source");
       let title = document.getElementById("title");
       let songName = document.getElementById("songName");
       let dropArea = document.getElementById("drop-area");
+      let playlist = document.getElementById("playlist");
+      let playlistContainer = document.querySelector(".playlist-container");
+
+      let currentActive = document.querySelector(".track.active");
+
       let noSong = false;
 
-      console.log(noSong);
+      playlist.addEventListener("click", function () {
+        console.log("Opened Playlisst");
+
+        if (playlistContainer.style.display === "block") {
+          playlistContainer.style.display = "none";
+        } else {
+          playlistContainer.style.display = "block";
+        }
+      });
 
       dropArea.addEventListener("dragover", (event) => {
         event.stopPropagation();
@@ -62,18 +87,45 @@
         event.preventDefault();
 
         let fileList = event.dataTransfer.files;
-        console.log(fileList[0].name);
-        title.innerHTML = fileList[0].name.split("-")[0];
-        songName.innerHTML = fileList[0].name.split("-", 2)[1];
-        songSource.src = `media/${fileList[0].name}`;
-        // console.log(songSource);
-        song.load();
-        noSong = true;
-        if (ctrlIcon.classList.contains("fa-pause")) {
-          ctrlIcon.classList.remove("fa-pause");
-          ctrlIcon.classList.add("fa-play");
-          playPause();
-        }
+
+        let htmlAddTrack = `
+        
+        <div class="track">
+            <div class="track-container">
+              <button class="songName">${fileList[0].name}</button>
+            </div>
+          </div>
+
+        `;
+
+        playlistContainer.insertAdjacentHTML("beforeend", htmlAddTrack);
+
+        let tracks = document.querySelectorAll(".track");
+        tracks.forEach((track) => {
+          track.addEventListener("dblclick", function () {
+            if (currentActive) currentActive.classList.remove("active");
+
+            track.classList.add("active");
+            currentActive = track;
+
+            let playingTrack = track.querySelector(".songName").innerHTML;
+            console.log(track.querySelector(".songName").innerHTML);
+
+            console.log(fileList[0].name);
+            title.innerHTML = playingTrack.split("-")[0];
+            songName.innerHTML = playingTrack.split("-", 2)[1];
+            songSource.src = `media/${playingTrack}`;
+            // console.log(songSource);
+            song.load();
+            noSong = true;
+
+            if (ctrlIcon.classList.contains("fa-pause")) {
+              ctrlIcon.classList.remove("fa-pause");
+              ctrlIcon.classList.add("fa-play");
+              playPause();
+            }
+          });
+        });
       });
 
       song.onloadedmetadata = function () {
@@ -99,6 +151,11 @@
         setInterval(() => {
           progress.value = song.currentTime;
         }, 500);
+
+        volume.addEventListener("input", function () {
+          song.volume = volume.value;
+          console.log(volume.value);
+        });
 
         progress.onchange = function () {
           song.play();
